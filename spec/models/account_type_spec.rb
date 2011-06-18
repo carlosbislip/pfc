@@ -78,6 +78,12 @@ describe AccountType, "find by raw name" do
       AccountType.find_by_raw_name(string).should == creditline
     end
   end
+  it "should find loan" do
+    creditline = AccountType::ACCOUNT_TYPES[AccountType::LOAN]
+    ["loan", "Loan", "LOAN"].each do |string|
+      AccountType.find_by_raw_name(string).should == loan
+    end
+  end
   it "should find money market" do
     moneymarket = AccountType::ACCOUNT_TYPES[AccountType::MONEYMRKT]
     ["money market", "Money  Market", "MONEY   MARKET", "money mrkt"].each do |string|

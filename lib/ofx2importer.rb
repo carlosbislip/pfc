@@ -18,7 +18,7 @@ class OFX2Importer
   MY_NAME = 'OFX2Importer'
 
   # REVIEW: move this to an external file?; YAML, perhaps
-  MAP_CONSTS = { :creditcard => 'Credit Card', :brokerage => 'BROKERAGE' }
+  MAP_CONSTS = { :creditcard => 'Credit Card', :brokerage => 'BROKERAGE', :loan => 'Loan' }
   MAP = {
     :fi_meta => {:org => "/OFX/SIGNONMSGSRSV1/SONRS/FI/ORG",
                 :fid => "/OFX/SIGNONMSGSRSV1/SONRS/FI/FID"},
@@ -80,7 +80,27 @@ class OFX2Importer
                                              :sic_code => "./SIC",
                                              :name => "./NAME",
                                              :payee_name => "./PAYEE/NAME", # alternate place for the name
+                                             :memo => "./MEMO"}}}},
+											 
+    :loan => {:root => "/OFX/CREDITCARDMSGSRSV1",
+                   :statements => {:root => "/OFX/CREDITCARDMSGSRSV1/CCSTMTTRNRS/CCSTMTRS",
+                   :meta => {:currency => "./CURDEF",
+                                             :account_number => "./CCACCTFROM/ACCTID",
+                                             :account_type => :loan,
+                                             :start_date => "./BANKTRANLIST/DTSTART",
+                                             :end_date => "./BANKTRANLIST/DTEND",
+                                             :balance => "./LEDGERBAL/BALAMT",
+                                             :balance_date => "./LEDGERBAL/DTASOF"},
+                   :txactions => {:root => "./BANKTRANLIST/STMTTRN",
+                                  :data => {:txaction_type => "./TRNTYPE",
+                                             :date_posted => "./DTPOSTED",
+                                             :amount => "./TRNAMT",
+                                             :txid => "./FITID",
+                                             :sic_code => "./SIC",
+                                             :name => "./NAME",
+                                             :payee_name => "./PAYEE/NAME", # alternate place for the name
                                              :memo => "./MEMO"}}}}
+
   }
 
   #----------------------------------------------------------------

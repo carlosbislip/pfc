@@ -38,6 +38,11 @@ Account.blueprint(:credit) do
   financial_inst  { nil }
 end
 
+Account.blueprint(:loan) do
+  account_type_id { AccountType::LOAN }
+  financial_inst  { nil }
+end
+
 ## Account statuses
 
 Account.blueprint(:disabled) do

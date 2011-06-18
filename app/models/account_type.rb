@@ -91,7 +91,7 @@ class AccountType < ActiveRecord::BaseWithoutTable
                       :has_uploads => true),
     LOAN  => new(:raw_name => 'LOAN',
                       :name => 'Loan',
-                      :visible => 0,
+                      :visible => 1,
                       :has_balance => true,
                       :has_fi => true,
                       :has_uploads => true),

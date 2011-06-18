@@ -11,9 +11,12 @@ var preferences = wesabe.data.preferences;
 var money = wesabe.lang.money;
 
 var DAY = "Day";
-var FIRST_DAY_OF_WEEK = 1; // NOTE: BRCM uses Monday as the first day of the week, so we follow suit.
-var MONTH = "Month";
 var WEEK = "Week";
+var BIWEEK = "Week";
+var MONTH = "Month";
+
+// NOTE: BRCM uses Monday as the first day of the week, so we follow suit.
+var FIRST_DAY_OF_WEEK = 1;
 
 // accounts for a parsing bug with processing.js
 function echo(o) { return o };
@@ -117,21 +120,19 @@ var chartData = echo({
     if (interval && interval.timeAgoInDays) {
       if (interval.unit === DAY || interval.unit === MONTH) {
         // back up a bit to get some padding
-        if (rangeOffset) end = wesabe.lang.date.addMonths(end, -interval.timeAgoInDays*rangeOffset);
         start = wesabe.lang.date.addMonths(end, -interval.timeAgoInDays);
-      }
-      else if (interval.unit === WEEK) {
-        if (rangeOffset) {
-          end = wesabe.lang.date.addWeeks(end, -interval.timeAgoInDays*rangeOffset);
-          end = wesabe.lang.date.startOfWeek(end, FIRST_DAY_OF_WEEK);
-        }
+      } else if (interval.unit === WEEK) {
         // back up a bit to get some padding
         start = wesabe.lang.date.addWeeks(end, -interval.timeAgoInDays);
         // go to the beginning of the week
         start = wesabe.lang.date.startOfWeek(start, FIRST_DAY_OF_WEEK);
-      }
-      else {
-        //logger.warn(" @ chartData.getDateRangeForInterval: got bad interval (", interval, "), using default");
+      } else if (interval.unit === BIWEEK) {
+        // back up a bit to get some padding
+        start = wesabe.lang.date.addWeeks(end, -interval.timeAgoInDays);
+        // go to the beginning of the week
+        start = wesabe.lang.date.startOfWeek(start, FIRST_DAY_OF_WEEK);
+      } else {
+        logger.warn(" @ chartData.getDateRangeForInterval: got bad interval (", interval, "), using default");
       }
     }
 
@@ -446,10 +447,11 @@ void drawLegend() {
 var rangeOffset = 0;
 
 var intervals = [
-  {key: "0", shortLabel: '1m', label: 'past month', timeAgoInDays: 1, unit: DAY, brcmSummary: 'daily', unique: true},
-  {key: "1", shortLabel: '3m', label: 'past 3 months', timeAgoInDays: 12, unit: WEEK, brcmSummary: 'weekly', unique: true},
-  {key: "2", shortLabel: '6m', label: 'past 6 months', timeAgoInDays: 6, unit: MONTH, brcmSummary: 'monthly', unique: false},
-  {key: "3", shortLabel: '1y', label: 'past 12 months', timeAgoInDays: 12, unit: MONTH, brcmSummary: 'monthly', unique: true}
+  {key: "0", shortLabel: '2w', label: 'past 6 months in biweekly intervals ending on Thursdays', timeAgoInDays: 26, unit: BIWEEK, brcmSummary: 'biweekly', unique: false},
+  {key: "1", shortLabel: '1m', label: 'past month', timeAgoInDays: 1, unit: DAY, brcmSummary: 'daily', unique: true},
+  {key: "2", shortLabel: '3m', label: 'past 3 months', timeAgoInDays: 12, unit: WEEK, brcmSummary: 'weekly', unique: true},
+  {key: "3", shortLabel: '6m', label: 'past 6 months', timeAgoInDays: 6, unit: MONTH, brcmSummary: 'monthly', unique: false},
+  {key: "4", shortLabel: '1y', label: 'past 12 months', timeAgoInDays: 12, unit: MONTH, brcmSummary: 'monthly', unique: true}
 ];
 
 intervals.selected = either(intervals[parseInt(either(preferences.get('charts.line.range'), 1))], intervals[1]);

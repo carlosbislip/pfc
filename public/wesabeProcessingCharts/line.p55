@@ -17,7 +17,7 @@ var filterTags = [];
 
 var DAY = "Day";
 var WEEK = "Week";
-var BIWEEK = "Week";
+var BIWEEK = "Period";
 var MONTH = "Month";
 
 // NOTE: BRCM uses Monday as the first day of the week, so we follow suit.
@@ -437,6 +437,11 @@ void drawGrid() {
         xAxisLabelFormat += "\nNNN" /* Jan */;
       }
     } else if (lines.interval === WEEK) {
+      xAxisLabelFormat = 'NNN d' /* Jan 4 */;
+      // append the year if we're on the first or last ones
+      if (xt === 0 /* first */ || xt === xAxis.length - 1 /* last */)
+        xAxisLabelFormat += "\nyyyy" /* 2009 */;
+	} else if (lines.interval === BIWEEK) {
       xAxisLabelFormat = 'NNN d' /* Jan 4 */;
       // append the year if we're on the first or last ones
       if (xt === 0 /* first */ || xt === xAxis.length - 1 /* last */)

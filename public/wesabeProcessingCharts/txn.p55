@@ -12,7 +12,7 @@ var money = wesabe.lang.money;
 
 var DAY = "Day";
 var WEEK = "Week";
-var BIWEEK = "Week";
+var BIWEEK = "Period";
 var MONTH = "Month";
 
 // NOTE: BRCM uses Monday as the first day of the week, so we follow suit.
@@ -305,6 +305,12 @@ void drawGrid() {
       if (xt === 0 /* first */ || xt === xAxis.length - 1 /* last */)
         xAxisLabelFormat += "\nyyyy" /* 2009 */;
     }
+    else if (lines.interval === BIWEEK) {
+      xAxisLabelFormat = 'NNN d' /* Jan 4 */;
+      // append the year if we're on the first or last ones
+      if (xt === 0 /* first */ || xt === xAxis.length - 1 /* last */)
+        xAxisLabelFormat += "\nyyyy" /* 2009 */;
+    }
     else if (lines.interval === MONTH) {
       xAxisLabelFormat = 'NNN' /* Jan */;
       // append the year if we're on the first or last ones
@@ -447,7 +453,7 @@ void drawLegend() {
 var rangeOffset = 0;
 
 var intervals = [
-  {key: "0", shortLabel: '2w', label: 'past 6 months in biweekly intervals ending on Thursdays', timeAgoInDays: 26, unit: BIWEEK, brcmSummary: 'biweekly', unique: false},
+  {key: "0", shortLabel: '2w', label: 'past 6 months', timeAgoInDays: 26, unit: BIWEEK, brcmSummary: 'biweekly', unique: false},
   {key: "1", shortLabel: '1m', label: 'past month', timeAgoInDays: 1, unit: DAY, brcmSummary: 'daily', unique: true},
   {key: "2", shortLabel: '3m', label: 'past 3 months', timeAgoInDays: 12, unit: WEEK, brcmSummary: 'weekly', unique: true},
   {key: "3", shortLabel: '6m', label: 'past 6 months', timeAgoInDays: 6, unit: MONTH, brcmSummary: 'monthly', unique: false},
@@ -620,7 +626,7 @@ void mousePressed() {
   }
   for (var hs = 0;hs < hotSpots.length;hs++) {
     if ( mouseX <= hotSpots[hs].x+xOffset && mouseX >= hotSpots[hs].x-xOffset && mouseY <= height-margin.bottom+xOffset && mouseY >= margin.top-xOffset) {
-      if (lines.interval === MONTH || lines.interval === WEEK) {
+      if (lines.interval === MONTH || lines.interval === WEEK || lines.interval === BIWEEK) {
         page.start = wesabe.lang.date.toParam(hotSpots[hs].xValue);
         page.end   = wesabe.lang.date.toParam((hs === hotSpots.length-1) ? lines.endDate : hotSpots[hs+1].xValue);
       }

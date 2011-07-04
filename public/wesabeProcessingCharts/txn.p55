@@ -118,7 +118,7 @@ var chartData = echo({
         end      = wesabe.lang.date.addDays(new Date(), 1);
 
     if (interval && interval.timeAgoInDays) {
-      if (interval.unit === DAY || interval.unit === MONTH) {
+      if (interval.unit === DAY || interval.unit === MONTH /* || interval.unit === BIWEEK*/) {
         // back up a bit to get some padding
         start = wesabe.lang.date.addMonths(end, -interval.timeAgoInDays);
       } else if (interval.unit === WEEK) {
@@ -126,16 +126,15 @@ var chartData = echo({
         start = wesabe.lang.date.addWeeks(end, -interval.timeAgoInDays);
         // go to the beginning of the week
         start = wesabe.lang.date.startOfWeek(start, FIRST_DAY_OF_WEEK);
-      } else if (interval.unit === BIWEEK) {
+	  } else if (interval.unit === BIWEEK) {
         // back up a bit to get some padding
-        start = wesabe.lang.date.addWeeks(end, -interval.timeAgoInDays);
+        start = wesabe.lang.date.addWeeks(end, -interval.timeAgoInDays*2);
         // go to the beginning of the week
         start = wesabe.lang.date.startOfWeek(start, FIRST_DAY_OF_WEEK);
       } else {
         logger.warn(" @ chartData.getDateRangeForInterval: got bad interval (", interval, "), using default");
       }
     }
-
     return {start: start, end: end};
   },
 
@@ -389,7 +388,7 @@ void drawLines() {
 
   // Is this month complete?
   var incomplete = false;
-  if (lines.interval === MONTH) {
+  if (lines.interval === MONTH || BIWEEK) {
     // incomplete = true means we're not on the last day of the month
     if (today.getDate() < wesabe.lang.date.endOfMonth(today).getDate()) incomplete = true;
   }
@@ -453,7 +452,7 @@ void drawLegend() {
 var rangeOffset = 0;
 
 var intervals = [
-  {key: "0", shortLabel: '2w', label: 'past 6 months', timeAgoInDays: 26, unit: BIWEEK, brcmSummary: 'biweekly', unique: false},
+  {key: "0", shortLabel: '2w', label: 'past 6 months', timeAgoInDays: 13, unit: BIWEEK, brcmSummary: 'biweekly', unique: false},
   {key: "1", shortLabel: '1m', label: 'past month', timeAgoInDays: 1, unit: DAY, brcmSummary: 'daily', unique: true},
   {key: "2", shortLabel: '3m', label: 'past 3 months', timeAgoInDays: 12, unit: WEEK, brcmSummary: 'weekly', unique: true},
   {key: "3", shortLabel: '6m', label: 'past 6 months', timeAgoInDays: 6, unit: MONTH, brcmSummary: 'monthly', unique: false},
